@@ -14,11 +14,11 @@ String string_new_with_size(int size) {
 
 String string_new_with_str(char* vet, int max_size) {
 	String cadeia;
-	cadeia.str = vet;
+	cadeia.str = NULL;
 	cadeia.Max_length = max_size;
 	cadeia.length = strlen(vet);
+	string_copy(&cadeia, vet, cadeia.length);
 	return cadeia;
-	
 }
 
 String string_new() {
@@ -96,7 +96,7 @@ int string_append(String* cadeia, char x) {
 	// Colocando o caractere desejado no final e, caso necessário, aumentando o tamanho
 	if (cadeia->length + 1 >= cadeia->Max_length) {
 		cadeia->Max_length *= 2;
-		char* aux = (char*)realloc(cadeia->str, cadeia->Max_length * sizeof(char));
+		char* aux = (char*)realloc((cadeia->str), cadeia->Max_length * sizeof(char));
 		if (aux == NULL)
 			return 0;
 		cadeia->str = aux;
@@ -190,3 +190,30 @@ int string_parseInt(String cadeia, int* numero) {
 	*numero = x;
 	return 1;
 }
+
+int string_copy(String* cadeia, char* vet, int n) {
+	int N = cadeia->Max_length;
+	char* aux;
+	if (N <= n || cadeia->str == NULL) {
+		N = n + 1;
+		aux = (char*)malloc(N * sizeof(char));
+		if (aux == NULL)
+			return 0;
+		
+		for (int i = 0; i < n; i++) 
+			aux[i] = vet[i];
+		aux[n] = '\0';
+		if (cadeia->str != NULL) 
+			free(cadeia->str);
+		cadeia->str = aux;
+		cadeia->Max_length = N;
+	}
+	else {
+		for (int i = 0; i < n; i++) 
+			cadeia->str[i] = vet[i];
+		cadeia->str[n] = '\0';
+	}
+	cadeia->length = n;
+	return 1;	
+}
+

@@ -28,7 +28,7 @@ int main() {
 	string_destroy(&cadeia);
 	
 	int numero;
-	cadeia = string_new_with_size(15);
+	cadeia = string_new_with_size(1);
 	
 	printf("Digite seu número: ");
 	string_input(&cadeia);
@@ -38,4 +38,13 @@ int main() {
 		printf("Número inválido!\n");
 		
 	string_destroy(&cadeia);
+	
+	cadeia = string_new_with_str("bat", 3);
+	string_print(cadeia);
+	string_append(&cadeia, 'A');
+	string_append(&cadeia, 'T');
+	string_append(&cadeia, 'A');
+	string_append(&cadeia, 'B');
+	
+	string_print(cadeia);
 }

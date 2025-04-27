@@ -21,5 +21,6 @@ int string_search(String, char);
 int string_count(String, char);
 void string_print(String);
 int string_parseInt(String, int*);
+int string_copy(String*, char*, int);
 
 #endif
