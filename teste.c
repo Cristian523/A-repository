@@ -23,6 +23,19 @@ int main() {
 	
 	string_print(cadeia);
 	printf("Novo tamanho da string: %d\n", string_length(cadeia));
+	printf("%s\n", cadeia.str);
 	
+	string_destroy(&cadeia);
+	
+	int numero;
+	cadeia = string_new_with_size(15);
+	
+	printf("Digite seu número: ");
+	string_input(&cadeia);
+	if (string_parseInt(cadeia, &numero) == 1)
+		printf("Seu número é: %d\n", numero);
+	else
+		printf("Número inválido!\n");
+		
 	string_destroy(&cadeia);
 }

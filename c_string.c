@@ -29,7 +29,7 @@ String string_new() {
 }
 
 int string_input(String* cadeia) {
-	char* aux;
+	char* aux, *novo_aux;
 	char x;
 	int N, n = 0;
 	// Se existir uma string antes, libere a memória.
@@ -55,7 +55,7 @@ int string_input(String* cadeia) {
 		
 		if (n >= N) {  // Se estiver cheio, dobre o tamanho
 			N *= 2;
-			char* novo_aux = (char*)realloc(aux, N * sizeof(char));
+			novo_aux = (char*)realloc(aux, N * sizeof(char));
 			if (novo_aux == NULL) {
 				free(aux);
 				return 0;
@@ -65,6 +65,17 @@ int string_input(String* cadeia) {
 		aux[n] = x;
 		n++;
 	}
+	// Colocando '\0' no final e aumentando o tamanho para isso, caso necessário
+	if (n >= N) {
+		N *= 2;
+		novo_aux = (char*)realloc(aux, N * sizeof(char));
+		if (novo_aux == NULL) {
+			free(aux);
+			return 0;
+		}
+		aux = novo_aux;	
+	}
+	aux[n] = '\0';
 	
 	// Atribuindo a nova string
 	cadeia->Max_length = N;
@@ -82,7 +93,8 @@ int string_append(String* cadeia, char x) {
 	if (cadeia->Max_length <= 0)
 		cadeia->Max_length = STRING_DEFAULT_CAPACITY; 
 	
-	if (cadeia->length >= cadeia->Max_length - 1) {
+	// Colocando o caractere desejado no final e, caso necessário, aumentando o tamanho
+	if (cadeia->length + 1 >= cadeia->Max_length) {
 		cadeia->Max_length *= 2;
 		char* aux = (char*)realloc(cadeia->str, cadeia->Max_length * sizeof(char));
 		if (aux == NULL)
@@ -91,6 +103,7 @@ int string_append(String* cadeia, char x) {
 	}
 	cadeia->str[cadeia->length] = x;
 	(cadeia->length)++;
+	cadeia->str[cadeia->length] = '\0';
 	return 1;
 }
 
@@ -155,4 +168,25 @@ void string_print(String cadeia) {
 	printf("\n");
 }
 
-
+int string_parseInt(String cadeia, int* numero) {
+	if (cadeia.length <= 0 || cadeia.str == NULL)	
+		return 0;
+	char c;
+	int n, potencia = 1, x = 0;
+	for(int i = cadeia.length - 1; i >= 0; i--) {
+		if(i == 0 && cadeia.str[i] == '-')
+			continue;
+		c = cadeia.str[i];
+		if (c >= '0' && c <= '9') {
+			n = (int) (c - '0');
+			x += n * potencia;
+			potencia *= 10;   
+		}
+		else
+			return 0;
+	}
+	if (cadeia.str[0] == '-')
+		x *= -1;
+	*numero = x;
+	return 1;
+}

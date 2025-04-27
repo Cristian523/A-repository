@@ -20,6 +20,6 @@ void string_remove_all(String*, char);
 int string_search(String, char);
 int string_count(String, char);
 void string_print(String);
-
+int string_parseInt(String, int*);
 
 #endif
