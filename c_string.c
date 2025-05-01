@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "c_string.h"
 #define STRING_DEFAULT_CAPACITY 50
 
@@ -28,7 +29,16 @@ String string_new() {
 	return cadeia;
 }
 
-int string_input(String* cadeia) {
+bool increase_size(char** vet, int* N) {
+	(*N) *= 2;
+	char* novo_vet = (char*) realloc(*vet, (*N) * sizeof(char));
+	if (novo_vet == NULL)
+		return false;
+	*vet = novo_vet;
+	return true;
+}
+
+bool string_input(String* cadeia) {
 	char* aux, *novo_aux;
 	char x;
 	int N, n = 0;
@@ -46,34 +56,28 @@ int string_input(String* cadeia) {
 	// Alocar o vetor para a nova string
 	aux = (char*)malloc(N * sizeof(char));
 	if (aux == NULL)
-		return 0;
+		return false;
 	
 	// Lê os caracteres até encontrar o '\n'
 	while (scanf("%c", &x) == 1) {
 		if (x == '\n')
 			break;
 		
-		if (n >= N) {  // Se estiver cheio, dobre o tamanho
-			N *= 2;
-			novo_aux = (char*)realloc(aux, N * sizeof(char));
-			if (novo_aux == NULL) {
+		if (n >= N) {  // Se estiver cheio, aumente o tamanho
+			if (increase_size(&aux, &N) == false) { // Aqui vai tentar dobrar o tamanho
 				free(aux);
-				return 0;
+				return false;
 			}
-			aux = novo_aux;	
 		}
 		aux[n] = x;
 		n++;
 	}
-	// Colocando '\0' no final e aumentando o tamanho para isso, caso necessário
+	// Aumenta o tamanho caso necessário e coloca o '\0' ao final da string
 	if (n >= N) {
-		N *= 2;
-		novo_aux = (char*)realloc(aux, N * sizeof(char));
-		if (novo_aux == NULL) {
+		if (increase_size(&aux, &N) == false) { // Aqui vai tentar dobrar o tamanho
 			free(aux);
-			return 0;
+			return false;
 		}
-		aux = novo_aux;	
 	}
 	aux[n] = '\0';
 	
@@ -81,30 +85,32 @@ int string_input(String* cadeia) {
 	cadeia->Max_length = N;
 	cadeia->length = n;
 	cadeia->str = aux;
-	return 1;
+	return true;
 }
 
 int string_length(String cadeia) {
 	return cadeia.length;
 }
 
-int string_append(String* cadeia, char x) {
+bool string_append(String* cadeia, char x) {
 	// Caso esta função seja chamada com nenhum tamanho inicial máximo.
 	if (cadeia->Max_length <= 0)
 		cadeia->Max_length = STRING_DEFAULT_CAPACITY; 
+	if (cadeia->str == NULL) {
+		cadeia->str = malloc(cadeia->Max_length * sizeof(char));
+    	if (cadeia->str == NULL) 
+    		return false;
+	}
 	
-	// Colocando o caractere desejado no final e, caso necessário, aumentando o tamanho
+	// Aumenta o tamanho da string, caso necessário
 	if (cadeia->length + 1 >= cadeia->Max_length) {
-		cadeia->Max_length *= 2;
-		char* aux = (char*)realloc((cadeia->str), cadeia->Max_length * sizeof(char));
-		if (aux == NULL)
-			return 0;
-		cadeia->str = aux;
+		if (increase_size(&(cadeia->str), &(cadeia->Max_length)) == false)  // Tenta dobrar o tamanho
+			return false;
 	}
 	cadeia->str[cadeia->length] = x;
 	(cadeia->length)++;
 	cadeia->str[cadeia->length] = '\0';
-	return 1;
+	return true;
 }
 
 void string_destroy(String* cadeia) {
@@ -113,7 +119,9 @@ void string_destroy(String* cadeia) {
 	cadeia->length = cadeia->Max_length = 0;
 }
 
-int string_remove(String* cadeia, char x) {
+bool string_remove(String* cadeia, char x) {
+	if (cadeia->str == NULL)
+		return false;
 	int posicao = -1;
 	for (int i = 0; i < cadeia->length; i++) {
 		if (cadeia->str[i] == x) {
@@ -127,12 +135,14 @@ int string_remove(String* cadeia, char x) {
 		}
 		cadeia->str[cadeia->length - 1] = '\0';
 		(cadeia->length)--;
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-void string_remove_all(String* cadeia, char x) {
+bool string_remove_all(String* cadeia, char x) {
+	if (cadeia->str == NULL)
+		return false;
 	int i, j = 0;
 	char aux;
 	for (i = 0; i < cadeia->length; i++) {
@@ -143,14 +153,17 @@ void string_remove_all(String* cadeia, char x) {
 	}
 	cadeia->str[j] = '\0';
 	cadeia->length = j;
+	return true;
 }
 
-int string_search(String cadeia, char x) {
+bool string_search(String cadeia, char x) {
+	if (cadeia.str == NULL)
+		return false;
 	for (int i = 0; i < cadeia.length; i++) {
 		if (cadeia.str[i] == x)
-			return 1; 
+			return true; 
 	}
-	return 0;
+	return false;
 }
 
 int string_count(String cadeia, char x) {
@@ -168,9 +181,9 @@ void string_print(String cadeia) {
 	printf("\n");
 }
 
-int string_parseInt(String cadeia, int* numero) {
+bool string_parseInt(String cadeia, int* numero) {
 	if (cadeia.length <= 0 || cadeia.str == NULL)	
-		return 0;
+		return false;
 	char c;
 	int n, potencia = 1, x = 0;
 	for(int i = cadeia.length - 1; i >= 0; i--) {
@@ -183,37 +196,35 @@ int string_parseInt(String cadeia, int* numero) {
 			potencia *= 10;   
 		}
 		else
-			return 0;
+			return false;
 	}
 	if (cadeia.str[0] == '-')
 		x *= -1;
 	*numero = x;
-	return 1;
+	return true;
 }
 
-int string_copy(String* cadeia, char* vet, int n) {
+bool string_copy(String* cadeia, char* vet, int n) {
 	int N = cadeia->Max_length;
 	char* aux;
-	if (N <= n || cadeia->str == NULL) {
+	if (N <= n)
 		N = n + 1;
-		aux = (char*)malloc(N * sizeof(char));
-		if (aux == NULL)
-			return 0;
+	aux = (char*)malloc(N * sizeof(char));
+	if (aux == NULL)
+		return false;
 		
-		for (int i = 0; i < n; i++) 
-			aux[i] = vet[i];
-		aux[n] = '\0';
-		if (cadeia->str != NULL) 
-			free(cadeia->str);
-		cadeia->str = aux;
-		cadeia->Max_length = N;
-	}
-	else {
-		for (int i = 0; i < n; i++) 
-			cadeia->str[i] = vet[i];
-		cadeia->str[n] = '\0';
-	}
+	for (int i = 0; i < n; i++) 
+		aux[i] = vet[i];
+	aux[n] = '\0';
+	
+	if (cadeia->str != NULL)
+		free(cadeia->str);	
+	
+	cadeia->str = aux;
+	cadeia->Max_length = N;
 	cadeia->length = n;
-	return 1;	
+	return true;	
 }
+
+
 

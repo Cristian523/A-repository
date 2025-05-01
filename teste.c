@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "c_string.h"
 
 int main() {
@@ -17,7 +18,7 @@ int main() {
 	
 	string_print(cadeia);
 	
-	printf("O número de caracteres é: %d\n", string_length(cadeia));
+	printf("O tamanho da string atual é: %d\n", string_length(cadeia));
 	
 	string_append(&cadeia, 'A');
 	
@@ -28,11 +29,11 @@ int main() {
 	string_destroy(&cadeia);
 	
 	int numero;
-	cadeia = string_new_with_size(1);
+	cadeia = string_new_with_size(5);
 	
 	printf("Digite seu número: ");
 	string_input(&cadeia);
-	if (string_parseInt(cadeia, &numero) == 1)
+	if (string_parseInt(cadeia, &numero))
 		printf("Seu número é: %d\n", numero);
 	else
 		printf("Número inválido!\n");
@@ -47,4 +48,6 @@ int main() {
 	string_append(&cadeia, 'B');
 	
 	string_print(cadeia);
+	string_destroy(&cadeia);
+	
 }

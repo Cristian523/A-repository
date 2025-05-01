@@ -11,16 +11,17 @@ typedef struct String {
 String string_new_with_size(int);
 String string_new_with_str(char*, int);
 String string_new();
-int string_input(String*);
+bool increase_size(char**, int*);
+bool string_input(String*);
 int string_length(String);
-int string_append(String*, char);
+bool string_append(String*, char);
 void string_destroy(String*);
-int string_remove(String*, char);
-void string_remove_all(String*, char);
-int string_search(String, char);
+bool string_remove(String*, char);
+bool string_remove_all(String*, char);
+bool string_search(String, char);
 int string_count(String, char);
 void string_print(String);
-int string_parseInt(String, int*);
-int string_copy(String*, char*, int);
+bool string_parseInt(String, int*);
+bool string_copy(String*, char*, int);
 
 #endif
