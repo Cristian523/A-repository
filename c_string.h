@@ -18,10 +18,12 @@ bool string_append(String*, char);
 void string_destroy(String*);
 bool string_remove(String*, char);
 bool string_remove_all(String*, char);
-bool string_search(String, char);
+int string_search(String, char);
 int string_count(String, char);
 void string_print(String);
 bool string_parseInt(String, int*);
+bool string_parseFloat(String, float*);
+bool string_parseDouble(String, double*);
 bool string_copy(String*, char*, int);
 
 #endif

@@ -6,10 +6,20 @@
 
 int main() {
 	String cadeia = string_new();
-	printf("Digite aqui sua string: ");
+	printf("Digite aqui seu número ponto flutuante: ");
 	
 	string_input(&cadeia);
+	bool eh_convertivel;
+	double n;
+	eh_convertivel = string_parseDouble(cadeia, &n);
+	if (eh_convertivel)
+		printf("Seu número é: %lf\n", n);
+	else
+		printf("Número inválido!\n");
 	
+	
+	printf("Digite aqui sua string: ");
+	string_input(&cadeia);
 	string_print(cadeia);
 	
 	printf("O número de caracteres 'a's é: %d\n", string_count(cadeia, 'a'));
@@ -24,14 +34,13 @@ int main() {
 	
 	string_print(cadeia);
 	printf("Novo tamanho da string: %d\n", string_length(cadeia));
-	printf("%s\n", cadeia.str);
 	
 	string_destroy(&cadeia);
 	
 	int numero;
 	cadeia = string_new_with_size(5);
 	
-	printf("Digite seu número: ");
+	printf("Digite seu número inteiro: ");
 	string_input(&cadeia);
 	if (string_parseInt(cadeia, &numero))
 		printf("Seu número é: %d\n", numero);
@@ -49,5 +58,6 @@ int main() {
 	
 	string_print(cadeia);
 	string_destroy(&cadeia);
+	
 	
 }

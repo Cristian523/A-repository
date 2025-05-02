@@ -156,14 +156,14 @@ bool string_remove_all(String* cadeia, char x) {
 	return true;
 }
 
-bool string_search(String cadeia, char x) {
+int string_search(String cadeia, char x) {
 	if (cadeia.str == NULL)
-		return false;
+		return -1;
 	for (int i = 0; i < cadeia.length; i++) {
 		if (cadeia.str[i] == x)
-			return true; 
+			return i; 
 	}
-	return false;
+	return -1;
 }
 
 int string_count(String cadeia, char x) {
@@ -187,7 +187,7 @@ bool string_parseInt(String cadeia, int* numero) {
 	char c;
 	int n, potencia = 1, x = 0;
 	for(int i = cadeia.length - 1; i >= 0; i--) {
-		if(i == 0 && cadeia.str[i] == '-')
+		if(i == 0 && cadeia.str[i] == '-')   // Se for um número negativo
 			continue;
 		c = cadeia.str[i];
 		if (c >= '0' && c <= '9') {
@@ -198,7 +198,108 @@ bool string_parseInt(String cadeia, int* numero) {
 		else
 			return false;
 	}
-	if (cadeia.str[0] == '-')
+	if (cadeia.str[0] == '-') // Se for um número negativo
+		x *= -1;
+	*numero = x;
+	return true;
+}
+
+bool string_parseFloat(String cadeia, float* numero) {
+	if (cadeia.length <= 0 || cadeia.str == NULL) 
+		return false;
+	
+	char c;
+	int ponto_posicao = -1;
+	int n;
+	float potencia_1 = 1, potencia_2 = 0.1;
+	float x = 0.0;
+	
+	for (int i = 0; i < cadeia.length; i++) {  // Procurando o caractere '.'
+		 if (cadeia.str[i] == '.') {
+		 	ponto_posicao = i;
+		 	break;
+		}
+	}
+	if (ponto_posicao == -1)    // Se o float digitado não tem casas decimais
+		ponto_posicao = cadeia.length;
+	
+	
+	for (int i = ponto_posicao - 1; i >= 0; i--) {   // Convertendo os números antes do '.'
+		if (i == 0 && cadeia.str[i] == '-')  // Se for um número negativo
+			continue;
+		
+		c = cadeia.str[i];
+		if (c >= '0' && c <= '9') {
+			n = (int) (c - '0');
+			x += (float) (n * potencia_1);
+			potencia_1 *= 10; 
+		}
+		else
+			return false;
+	}
+	
+	for (int i = ponto_posicao + 1; i < cadeia.length; i++) { // Convertendo os números após o '.'
+		c = cadeia.str[i];
+		if (c >= '0' && c <= '9') {
+			n = (int) (c - '0');
+			x += n * potencia_2;
+			potencia_2 /= 10; 
+		}
+		else
+			return false;
+	}
+	if (cadeia.str[0] == '-') // Se for um número negativo
+		x *= -1;
+	*numero = x;
+	return true;
+}
+
+bool string_parseDouble(String cadeia, double* numero) {
+	if (cadeia.length <= 0 || cadeia.str == NULL) 
+		return false;
+	
+	char c;
+	int ponto_posicao = -1;
+	int n;
+	double potencia_1 = 1, potencia_2 = 0.1;
+	double x = 0.0;
+	
+	for (int i = 0; i < cadeia.length; i++) {  // Procurando o caractere '.'
+		 if (cadeia.str[i] == '.') {
+		 	ponto_posicao = i;
+		 	break;
+		}
+	}
+	if (ponto_posicao == -1)    // Se o double digitado não tem casas decimais
+		ponto_posicao = cadeia.length;
+	
+	
+	for (int i = ponto_posicao - 1; i >= 0; i--) {   // Convertendo os números antes do '.'
+		if (i == 0 && cadeia.str[i] == '-')  // Se for um número negativo
+			continue;
+		
+		c = cadeia.str[i];
+		if (c >= '0' && c <= '9') {
+			n = (int) (c - '0');
+			x += (double) (n * potencia_1);
+			potencia_1 *= 10; 
+		}
+		else
+			return false;
+	}
+	
+	for (int i = ponto_posicao + 1; i < cadeia.length; i++) { // Convertendo os números após o '.'
+		c = cadeia.str[i];
+		if (c >= '0' && c <= '9') {
+			n = (int) (c - '0');
+			x += n * potencia_2;
+			potencia_2 /= 10; 
+		}
+		else
+			return false;
+	}
+	
+	if (cadeia.str[0] == '-') // Se for um número negativo
 		x *= -1;
 	*numero = x;
 	return true;
