@@ -114,9 +114,11 @@ bool string_append(String* cadeia, char x) {
 }
 
 void string_destroy(String* cadeia) {
-	free(cadeia->str);
-	cadeia->str = NULL;
-	cadeia->length = cadeia->Max_length = 0;
+	if (cadeia->str != NULL) {
+		free(cadeia->str);
+		cadeia->str = NULL;
+		cadeia->length = cadeia->Max_length = 0;
+	}
 }
 
 bool string_remove(String* cadeia, char x) {
@@ -187,7 +189,7 @@ bool string_parseInt(String cadeia, int* numero) {
 	char c;
 	int n, potencia = 1, x = 0;
 	for(int i = cadeia.length - 1; i >= 0; i--) {
-		if(i == 0 && cadeia.str[i] == '-')   // Se for um número negativo
+		if(i == 0 && (cadeia.str[i] == '-' || cadeia.str[i] == '+'))   // Se for um número negativo
 			continue;
 		c = cadeia.str[i];
 		if (c >= '0' && c <= '9') {
@@ -225,7 +227,7 @@ bool string_parseFloat(String cadeia, float* numero) {
 	
 	
 	for (int i = ponto_posicao - 1; i >= 0; i--) {   // Convertendo os números antes do '.'
-		if (i == 0 && cadeia.str[i] == '-')  // Se for um número negativo
+		if (i == 0 && (cadeia.str[i] == '-' || cadeia.str[i] == '+'))  // Se for um número negativo
 			continue;
 		
 		c = cadeia.str[i];
@@ -275,7 +277,7 @@ bool string_parseDouble(String cadeia, double* numero) {
 	
 	
 	for (int i = ponto_posicao - 1; i >= 0; i--) {   // Convertendo os números antes do '.'
-		if (i == 0 && cadeia.str[i] == '-')  // Se for um número negativo
+		if (i == 0 && (cadeia.str[i] == '-' || cadeia.str[i] == '+'))  // Se for um número negativo
 			continue;
 		
 		c = cadeia.str[i];
@@ -326,6 +328,37 @@ bool string_copy(String* cadeia, char* vet, int n) {
 	cadeia->length = n;
 	return true;	
 }
+
+bool string_nextInt(int* numero) {
+	String cadeia = string_new_with_size(20);
+	bool ehNumero = false;
+	if (string_input(&cadeia)) {
+		ehNumero = string_parseInt(cadeia, numero);
+		string_destroy(&cadeia);
+	}	
+	return ehNumero;
+}
+
+bool string_nextFloat(float* numero){
+	String cadeia = string_new();
+	bool ehNumero = false;
+	if (string_input(&cadeia)) {
+		ehNumero = string_parseFloat(cadeia, numero);
+		string_destroy(&cadeia);
+	}	
+	return ehNumero;	
+}
+
+bool string_nextDouble(double* numero) {
+	String cadeia = string_new();
+	bool ehNumero = false;
+	if (string_input(&cadeia)) {
+		ehNumero = string_parseDouble(cadeia, numero);
+		string_destroy(&cadeia);
+	}	
+	return ehNumero;
+}
+	
 
 
 

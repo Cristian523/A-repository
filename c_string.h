@@ -25,5 +25,8 @@ bool string_parseInt(String, int*);
 bool string_parseFloat(String, float*);
 bool string_parseDouble(String, double*);
 bool string_copy(String*, char*, int);
+bool string_nextInt(int*);
+bool string_nextFloat(float*);
+bool string_nextDouble(double*);
 
 #endif

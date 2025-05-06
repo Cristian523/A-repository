@@ -8,11 +8,8 @@ int main() {
 	String cadeia = string_new();
 	printf("Digite aqui seu número ponto flutuante: ");
 	
-	string_input(&cadeia);
-	bool eh_convertivel;
 	double n;
-	eh_convertivel = string_parseDouble(cadeia, &n);
-	if (eh_convertivel)
+	if (string_nextDouble(&n))
 		printf("Seu número é: %lf\n", n);
 	else
 		printf("Número inválido!\n");
@@ -41,8 +38,7 @@ int main() {
 	cadeia = string_new_with_size(5);
 	
 	printf("Digite seu número inteiro: ");
-	string_input(&cadeia);
-	if (string_parseInt(cadeia, &numero))
+	if (string_nextInt(&numero))
 		printf("Seu número é: %d\n", numero);
 	else
 		printf("Número inválido!\n");
